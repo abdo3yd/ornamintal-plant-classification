@@ -48,6 +48,9 @@ st.markdown("""
         background-position: center;
     }
     h1, h2, h3 {color: #1abc9c !important;}
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
     
     /* Blurred background layer */
     .stApp::before {
