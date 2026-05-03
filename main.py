@@ -1,66 +1,345 @@
 import streamlit as st
+import sqlite3
 import tensorflow as tf
 import numpy as np
+from datetime import datetime
 
-model = tf.keras.models.load_model("./trained_model.keras")
+@st.cache_resource
+def load_model():
+    return tf.keras.models.load_model("./trained_model.keras")
 
-#Tensorflow Model Prediction
-def model_prediction(test_image):
-    image = tf.keras.preprocessing.image.load_img(test_image,target_size=(224,224))
-    input_arr = tf.keras.preprocessing.image.img_to_array(image)
-    input_arr = np.array([input_arr]) #convert single image to batch
-    predictions = model.predict(input_arr)
-    return np.argmax(predictions) #return index of max element
+model = load_model()
+class_names = [
+'Damask Rose',
+'Echeveria Flower',
+'Mirabilis Jalapa',
+'Rain Lily',
+'Zinnia Elegans'
+]
 
-#Sidebar
-st.sidebar.title("Dashboard")
-app_mode = st.sidebar.selectbox("Select Page",["Home","About","plant classification"])
+plant_info = [
+"Rosa × damascena (Latin for damascene rose), more commonly known as the Damask rose. The flowers are renowned for their fine fragrance and are commercially harvested for rose oil used in perfumery and to make rose water and \"rose concrete\".",
+"Echeveria is a large genus of flowering plants in the family Crassulaceae, native to semi-desert areas of Central America, Mexico and northwestern South America. Echeveria plants are evergreen. Flowers on short stalks (cymes) arise from compact rosettes of succulent fleshy, often brightly coloured leaves.",
+"Mirabilis jalapa, the marvel of Peru or four o'clock flower, is the most commonly grown ornamental species of Mirabilis plant, and is available in a range of colors. Mirabilis in Latin means wonderful and Jalapa (or Xalapa) is the state capital of Veracruz in Mexico. Mirabilis jalapa is believed to have been cultivated by the Aztecs for medicinal and ornamental purposes.",
+"Zephyranthes is a genus of temperate and tropical bulbous plants in the Amaryllis family, subfamily Amaryllidoideae, native to the Americas and widely cultivated as ornamentals.  Common names for species in this genus include fairy lily, rainflower, zephyr lily, magic lily, Atamasco lily, and rain lily.",
+"Zinnia elegans (syn. Zinnia violacea) known as youth-and-age, common zinnia or elegant zinnia, is an annual flowering plant in the family Asteraceae. It is native to Mexico but grown as an ornamental in many places and naturalised in several places, including scattered locations in South and Central America, the West Indies, the United States, Australia, and Italy."
+]
 
-#Main Page
-if(app_mode=="Home"):
-    st.header("ornamintal plant classification system")
-    image_path = "home_page.jpeg"
-    st.image(image_path, use_container_width=True)
-    st.markdown("""
-    Welcome to the ornamintal plant classification System! 🌿🔍
+def predict(image):
+    img = image.resize((224, 224))  # resizes here instead
+    arr = tf.keras.preprocessing.image.img_to_array(img)
+    arr = np.expand_dims(arr, axis=0)
+    predictions = model.predict(arr)
+    idx = np.argmax(predictions)
+    return idx
+
+# ========== PAGE CONFIG ==========
+
+st.set_page_config(page_title="Verdant Vision", page_icon="🌿", layout="centered")
+
+# ========== CSS ==========
+
+st.markdown("""
+<style>
+    .stApp {
+        background: none;
+        background-size: cover;
+        background-attachment: fixed;
+        background-position: center;
+    }
+    h1, h2, h3 {color: #1abc9c !important;}
     
-    Our mission is to help in identifying ornamintal plants efficiently. Upload an image of a plant, and our system will analyze it to know what tyoe of plant it is.
+    /* Blurred background layer */
+    .stApp::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80') no-repeat center center;
+        background-size: cover;
+        filter: blur(2px);
+        z-index: -2;
+    }
 
-    ### How It Works
-    1. **Upload Image:** Go to the **plant classification** page and upload an image of a plant.
-    2. **Analysis:** Our system will process the image using advanced algorithms to identify the plant.
-    3. **Results:** View the results .
+    /* Green overlay */
+    .stApp::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(20, 100, 60, 0.35); /* green tint */
+        z-index: -1;
+    }
+            
+    /* White card container */
+    [data-testid="stVerticalBlock"] {
+        background: rgba(240, 245, 236, 0.95);
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        max-width: 600px;
+        margin: auto;
+        color: #0f4c27;
+    }
+            
+    label {
+        color: #1abc9c !important;
+        font-weight: 600;
+    }
+      
+    /* Input box background */
+    div[data-baseweb="input"] > div {
+        width:  600px;
+        max-width: 520px;
+        background-color: white !important;
+        color: black !important;
+    }
 
-    ### Get Started
-    Click on the **plant classification** page in the sidebar to upload an image.
+    /* Text inside input */
+    div[data-baseweb="input"] input {
+        width:  600px;
+        max-width: 540px;
+        border-radius: 8px;
+        background-color: white !important;
+        color: black !important;
+    }
+    
+    /* Placeholder text */
+    div[data-baseweb="input"] input::placeholder {
+        color: #000 !important;
+    }
 
-    """)
+    /* Border styling */
+    div[data-baseweb="input"] > div {
+        border-radius: 8px;
+    }
 
-#About Project
-elif(app_mode=="About"):
-    st.header("About")
-    st.markdown("""
-                #### About Dataset
-                This dataset is recreated using offline augmentation from the original dataset.The original dataset can be found on this github repo.
-                This dataset consists of about 3K rgb images of different ornamintal plants and categorized into 5 different classes.The total dataset is divided into 80/20 ratio of training and validation set preserving the directory structure.
-                A new directory containing 5 test images is created later for prediction purpose.
-                #### Content
-                1. train (2398 images)
-                2. test (5 images)
-                3. validation (469 images)
+    /* Eye icon color */
+    div[data-baseweb="input"] button {
+        color: #1abc9c !important;
+    }
 
-                """)
+    /* Hover effect */
+    div[data-baseweb="input"] button:hover {
+        color: #16a085 !important;
+    }
 
-#Prediction Page
-elif(app_mode=="plant classification"):
-    st.header("plant classification")
-    test_image = st.file_uploader("Choose an Image:")
-    if(st.button("Show Image")):
-        st.image(test_image, use_container_width=True)
-    #Predict button
-    if(st.button("Predict")):
-        result_index = model_prediction(test_image)
-        st.write("Our Prediction")
-        #Reading Labels
-        class_name = ['Damask Rose', 'Echevria Flower', 'Mirabilis Jalapa', 'Rain Lily','Zinnia Elegans']
-        st.success("Model is Predicting it's a {}".format(class_name[result_index]))
+    .stButton>button {
+        background: linear-gradient(135deg, #1abc9c, #16a085);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        
+        width:  600px;
+        max-width: 520px;
+        font-weight: 600;
+    }
+            
+    .result-box {
+        background: rgba(26, 188, 156, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #1abc9c;
+        margin-top: 20px;
+    }
+            
+    .result-item {
+        background: rgba(26, 188, 156, 0.1);
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #1abc9c;
+        margin: 10px 0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ========== DATABASE METHODS ==========
+
+def register_user(name, email, password):
+    conn = sqlite3.connect('plant_app.db')
+    c = conn.cursor()
+    try:
+        c.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+                  (name, email, password))
+        conn.commit()
+        return True
+    except sqlite3.IntegrityError:
+        return False  # Email already exists
+    finally:
+        conn.close()
+
+def login_user(email, password):
+    conn = sqlite3.connect('plant_app.db')
+    c = conn.cursor()
+    c.execute("SELECT name FROM users WHERE email=? AND password=?", (email, password))
+    user = c.fetchone()
+    conn.close()
+    return user[0] if user else None
+
+def save_history(user_email, label, filename):
+    conn = sqlite3.connect('plant_app.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO history (user_email, label, filename) VALUES (?, ?, ?)",
+              (user_email, label, filename))
+    conn.commit()
+    conn.close()
+
+def get_history(user_email):
+    conn = sqlite3.connect('plant_app.db')
+    c = conn.cursor()
+    c.execute("SELECT label, filename, analyzed_at FROM history WHERE user_email=? ORDER BY analyzed_at DESC",
+              (user_email,))
+    results = c.fetchall()
+    conn.close()
+    return results
+
+# ========== SESSION STATE ==========
+
+if "page" not in st.session_state:
+    st.session_state.page = "login"
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+if "user_email" not in st.session_state:
+    st.session_state.user_email = ""
+if "users" not in st.session_state:
+    st.session_state.users = {}
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+# ========== LOGIN PAGE ==========
+
+def login_page():
+    st.markdown("<h2>Ornamental Plant Classifier</h2>", unsafe_allow_html=True)
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+
+    if st.button("Login"):
+        user = login_user(email, password)
+        if user:
+            st.session_state.user_name = user
+            st.session_state.user_email = email
+            st.session_state.page = "dashboard"
+            st.rerun()
+            
+        else:
+            st.warning("email or password wrong")
+
+    if st.button("Create Account", key="to_signup"):
+        st.session_state.page = "signup"
+        st.rerun()
+
+# ========== SIGNUP PAGE ==========
+
+def signup_page():
+    st.markdown("<h2>Create Account</h2>", unsafe_allow_html=True)
+    st.caption("Join Ornamental Plant Classifier")
+    name = st.text_input("Full Name")
+    email = st.text_input("Email")
+    password = st.text_input("Password", type="password")
+    confirm = st.text_input("Confirm Password", type="password")
+
+    if st.button("Sign Up"):
+        if name and email and password and confirm:
+            if password != confirm:
+                st.error("Passwords do not match")
+            else:
+                success = register_user(name, email, password)
+                if success:
+                    st.success("Account created! Please login.")
+                    st.session_state.page = "login"
+                    st.rerun()
+                else:
+                    st.error("Email already registered")
+        else:
+            st.warning("Please fill in all fields")
+
+    if st.button("Back to Login", key="to_login"):
+        st.session_state.page = "login"
+        st.rerun()
+
+# ========== DASHBOARD PAGE ==========
+
+def dashboard_page():
+    st.markdown(f"<h2>Welcome {st.session_state.user_name} </h2>", unsafe_allow_html=True)
+
+    if st.button("Classify"):
+        st.session_state.page = "analyzer"
+        st.rerun()
+
+    if st.button("History"):
+        st.session_state.page = "history"
+        st.rerun()
+
+    if st.button("Logout"):
+        st.session_state.user_name = ""
+        st.session_state.page = "login"
+        st.rerun()
+
+# ========== CLASSIFIER PAGE ==========
+
+def analyzer_page():
+    st.markdown("<h2>Classify Plant Image</h2>", unsafe_allow_html=True)
+    uploaded = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
+
+    if uploaded:
+        from PIL import Image
+        image = Image.open(uploaded)
+        st.image(image, use_container_width=True)
+
+        if st.button("Classify"):
+            with st.spinner("Analyzing..."):
+                label = predict(image)
+
+            st.markdown(f"""
+            <div class="result-box">
+                <h3>{class_names[label]}</h3>
+                <p>information: {plant_info[label]}</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            save_history(st.session_state.user_email, class_names[label], uploaded.name)
+
+    if st.button("Home"):
+        st.session_state.page = "dashboard"
+        st.rerun()
+
+# ========== HISTORY PAGE ==========
+
+def history_page():
+    st.markdown("<h2>Your Classified Plants</h2>", unsafe_allow_html=True)
+
+    results = get_history(st.session_state.user_email)
+
+    if not results:
+        st.info("No analyzed plants yet")
+    else:
+        for i, result in enumerate(results):
+            label, filename, analyzed_at = result
+            st.markdown(f"""
+            <div class="result-item">
+                <h4>#{i+1} - {label}</h4>
+                <p><strong>File:</strong> {filename}</p>
+                <p><small>Analyzed: {analyzed_at}</small></p>
+            </div>
+            """, unsafe_allow_html=True)
+
+    if st.button("Home"):
+        st.session_state.page = "dashboard"
+        st.rerun()
+
+# ========== ROUTER ==========
+
+if st.session_state.page == "login":
+    login_page()
+elif st.session_state.page == "signup":
+    signup_page()
+elif st.session_state.page == "dashboard":
+    dashboard_page()
+elif st.session_state.page == "analyzer":
+    analyzer_page()
+elif st.session_state.page == "history":
+    history_page()
