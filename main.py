@@ -1,8 +1,7 @@
 import streamlit as st
+import sqlite3
 import tensorflow as tf
 import numpy as np
-import sqlite3
-import base64
 from datetime import datetime
 
 @st.cache_resource
@@ -34,13 +33,6 @@ def predict(image):
     idx = np.argmax(predictions)
     return idx
 
-# ========== LOAD BG IMG ==========
-
-def get_base64(image_path):
-    with open(image_path, "rb") as f:
-        return base64.b64encode(f.read()).decode()
-img = get_base64("home_page.jpeg")
-
 # ========== PAGE CONFIG ==========
 
 st.set_page_config(page_title="Verdant Vision", page_icon="🌿", layout="centered")
@@ -68,7 +60,7 @@ st.markdown("""
         left: 0;
         width: 100%;
         height: 100%;
-        background: url('data:image/jpeg;base64,{img}') no-repeat center center;
+        background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80') no-repeat center center;
         background-size: cover;
         filter: blur(2px);
         z-index: -2;
