@@ -1,14 +1,19 @@
 import streamlit as st
 import sqlite3
-import tensorflow as tf
+# import tensorflow as tf
 import numpy as np
 from datetime import datetime
 
-@st.cache_resource
-def load_model():
-    return tf.keras.models.load_model("./trained_model.keras")
+#Sidebar
+# st.sidebar.title("Dashboard")
+# st.session_state.page = st.sidebar.selectbox("Select Page",["home","dashboard","signup","login","analyzer","history"])
 
-model = load_model()
+# @st.cache_resource
+# def load_model():
+#     return tf.keras.models.load_model("./trained_model.keras")
+
+# model = load_model()
+
 class_names = [
 'Damask Rose',
 'Echeveria Flower',
@@ -39,6 +44,10 @@ st.set_page_config(page_title="Verdant Vision", page_icon="🌿", layout="center
 
 # ========== CSS ==========
 
+    # header {visibility: hidden;}
+    # footer {visibility: hidden;}
+    # MainMenu {visibility: hidden;}
+
 st.markdown("""
 <style>
     .stApp {
@@ -48,9 +57,6 @@ st.markdown("""
         background-position: center;
     }
     h1, h2, h3 {color: #1abc9c !important;}
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
     
     /* Blurred background layer */
     .stApp::before {
@@ -84,7 +90,7 @@ st.markdown("""
         padding: 40px;
         border-radius: 20px;
         box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        max-width: 600px;
+        max-width: 650px;
         margin: auto;
         color: #0f4c27;
     }
@@ -96,8 +102,8 @@ st.markdown("""
       
     /* Input box background */
     div[data-baseweb="input"] > div {
-        width:  600px;
-        max-width: 520px;
+        width:  1000px;
+        max-width: 105%;
         background-color: white !important;
         color: black !important;
     }
@@ -105,7 +111,7 @@ st.markdown("""
     /* Text inside input */
     div[data-baseweb="input"] input {
         width:  600px;
-        max-width: 540px;
+        max-width: 535px;
         border-radius: 8px;
         background-color: white !important;
         color: black !important;
@@ -137,8 +143,8 @@ st.markdown("""
         border: none;
         border-radius: 8px;
         
-        width:  600px;
-        max-width: 520px;
+        width:  1000px;
+        max-width: 100%;
         font-weight: 600;
     }
             
@@ -200,10 +206,44 @@ def get_history(user_email):
     conn.close()
     return results
 
+def home_page():
+    st.header("ORNAMENTAL PLANT IDENTIFIER")
+    st.markdown("""
+    Welcome to the Ornamental Plant Identifier! 🌿🔍
+    
+    Our mission is to help in identifying ornamental plants efficiently. Upload an image of a plant, and our system will analyze it to identify what type of plant it is.
+
+    ### How It Works
+    1. **Create Account:** Sign up or log in to access the classifier.
+    2. **Upload Image:** Go to the **identify** page and upload an image of an ornamental plant.
+    3. **Analysis:** Our system will process the image using advanced deep learning algorithms to identify the plant.
+    4. **Results:** View the plant name and detailed information about it.
+
+    ### Why Choose Us?
+    - **Accuracy:** Our system utilizes state-of-the-art CNN techniques for accurate plant identification.
+    - **User-Friendly:** Simple and intuitive interface for seamless user experience.
+    - **Fast and Efficient:** Receive results in seconds.
+    - **History:** Keep track of all your previously classified plants.
+
+    ### Supported Plants
+    -  Damask Rose
+    -  Echeveria Flower
+    -  Mirabilis Jalapa
+    -  Rain Lily
+    -  Zinnia Elegans
+
+    ### Get Started
+    Click **Get Started** below to create an account and start classifying!
+    """)
+
+    if st.button("Get Started"):
+        st.session_state.page = "login"
+        st.rerun()
+
 # ========== SESSION STATE ==========
 
 if "page" not in st.session_state:
-    st.session_state.page = "login"
+    st.session_state.page = "home"
 if "user_name" not in st.session_state:
     st.session_state.user_name = ""
 if "user_email" not in st.session_state:
@@ -295,7 +335,8 @@ def analyzer_page():
 
         if st.button("Classify"):
             with st.spinner("Analyzing..."):
-                label = predict(image)
+                # label = predict(image)
+                label = 1
 
             st.markdown(f"""
             <div class="result-box">
@@ -346,3 +387,5 @@ elif st.session_state.page == "analyzer":
     analyzer_page()
 elif st.session_state.page == "history":
     history_page()
+elif st.session_state.page == "home":
+    home_page()
