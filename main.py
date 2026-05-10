@@ -103,7 +103,7 @@ st.markdown("""
     /* Input box background */
     div[data-baseweb="input"] > div {
         width:  1000px;
-        max-width: 115%;
+        max-width: 110%;
         background-color: white !important;
         color: black !important;
     }
