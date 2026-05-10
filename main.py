@@ -4,9 +4,6 @@ import sqlite3
 import numpy as np
 from datetime import datetime
 
-#Sidebar
-# st.sidebar.title("Dashboard")
-# st.session_state.page = st.sidebar.selectbox("Select Page",["home","dashboard","signup","login","analyzer","history"])
 
 # @st.cache_resource
 # def load_model():
@@ -47,124 +44,124 @@ st.set_page_config(page_title="Verdant Vision", page_icon="🌿", layout="center
     # header {visibility: hidden;}
     # footer {visibility: hidden;}
     # MainMenu {visibility: hidden;}
-
-st.markdown("""
-<style>
-    .stApp {
-        background: none;
-        background-size: cover;
-        background-attachment: fixed;
-        background-position: center;
-    }
-    h1, h2, h3 {color: #1abc9c !important;}
-    
-    /* Blurred background layer */
-    .stApp::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80') no-repeat center center;
-        background-size: cover;
-        filter: blur(2px);
-        z-index: -2;
-    }
-
-    /* Green overlay */
-    .stApp::after {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(20, 100, 60, 0.35); /* green tint */
-        z-index: -1;
-    }
-            
-    /* White card container */
-    [data-testid="stVerticalBlock"] {
-        background: rgba(240, 245, 236, 0.95);
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-        max-width: 650px;
-        margin: auto;
-        color: #0f4c27;
-    }
-            
-    label {
-        color: #1abc9c !important;
-        font-weight: 600;
-    }
-      
-    /* Input box background */
-    div[data-baseweb="input"] > div {
-        width:  1000px;
-        max-width: 109%;
-        background-color: white !important;
-        color: black !important;
-    }
-
-    /* Text inside input */
-    div[data-baseweb="input"] input {
-        width:  600px;
-        max-width: 535px;
-        border-radius: 8px;
-        background-color: white !important;
-        color: black !important;
-    }
-    
-    /* Placeholder text */
-    div[data-baseweb="input"] input::placeholder {
-        color: #000 !important;
-    }
-
-    /* Border styling */
-    div[data-baseweb="input"] > div {
-        border-radius: 8px;
-    }
-
-    /* Eye icon color */
-    div[data-baseweb="input"] button {
-        color: #1abc9c !important;
-    }
-
-    /* Hover effect */
-    div[data-baseweb="input"] button:hover {
-        color: #16a085 !important;
-    }
-
-    .stButton>button {
-        background: linear-gradient(135deg, #1abc9c, #16a085);
-        color: white;
-        border: none;
-        border-radius: 8px;
+def reset_css():
+    st.markdown("""
+    <style>
+        .stApp {
+            background: none;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+        h1, h2, h3 {color: #1abc9c !important;}
         
-        width:  1000px;
-        max-width: 100%;
-        font-weight: 600;
-    }
+        /* Blurred background layer */
+        .stApp::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80') no-repeat center center;
+            background-size: cover;
+            filter: blur(2px);
+            z-index: -2;
+        }
+
+        /* Green overlay */
+        .stApp::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 100, 60, 0.35); /* green tint */
+            z-index: -1;
+        }
+                
+        /* White card container */
+        [data-testid="stVerticalBlock"] {
+            background: rgba(205, 210, 200, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            max-width: 550px;
+            margin: auto;
+        }
+                
+        label {
+            color: #1abc9c !important;
+            font-weight: 600;
+        }
+        
+        /* Input box background */
+        div[data-baseweb="input"] > div {
+            width:  1000px;
+            max-width: 104%;
+            background-color: white !important;
+            color: black !important;
+        }
+
+        /* Text inside input */
+        div[data-baseweb="input"] input {
+            width:  600px;
+            max-width: 535px;
+            border-radius: 8px;
+            background-color: white !important;
+            color: black !important;
+        }
+        
+        /* Placeholder text */
+        div[data-baseweb="input"] input::placeholder {
+            color: #000 !important;
+        }
+
+        /* Border styling */
+        div[data-baseweb="input"] > div {
+            border-radius: 8px;
+        }
+
+        /* Eye icon color */
+        div[data-baseweb="input"] button {
+            color: #1abc9c !important;
+        }
+
+        /* Hover effect */
+        div[data-baseweb="input"] button:hover {
+            color: #16a085 !important;
+        }
+
+        .stButton>button {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white;
+            border: none;
+            border-radius: 8px;
             
-    .result-box {
-        background: rgba(26, 188, 156, 0.1);
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 4px solid #1abc9c;
-        margin-top: 20px;
-    }
-            
-    .result-item {
-        background: rgba(26, 188, 156, 0.1);
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 4px solid #1abc9c;
-        margin: 10px 0;
-    }
-</style>
-""", unsafe_allow_html=True)
+            width:  1000px;
+            max-width: 100%;
+            font-weight: 600;
+        }
+                
+        .result-box {
+            background: rgba(26, 188, 156, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #1abc9c;
+            margin-top: 20px;
+        }
+                
+        .result-item {
+            background: rgba(26, 188, 156, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #1abc9c;
+            margin: 10px 0;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+reset_css()
 
 # ========== DATABASE METHODS ==========
 
@@ -206,10 +203,34 @@ def get_history(user_email):
     conn.close()
     return results
 
+
+# ========== SESSION STATE ==========
+
+if "page" not in st.session_state:
+    st.session_state.page = "home"
+if "user_name" not in st.session_state:
+    st.session_state.user_name = ""
+if "user_email" not in st.session_state:
+    st.session_state.user_email = ""
+if "users" not in st.session_state:
+    st.session_state.users = {}
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+# ========== HOME PAGE ==========
+
 def home_page():
+    st.markdown("""
+    <style>  
+    [data-testid="stVerticalBlock"] {
+        width: 1000px;
+        max-width: 110%;
+    } 
+    </style>
+    """
+    , unsafe_allow_html=True)
     st.header("ORNAMENTAL PLANT IDENTIFIER")
     st.markdown("""
-    Welcome to the Ornamental Plant Identifier! 🌿🔍
     
     Our mission is to help in identifying ornamental plants efficiently. Upload an image of a plant, and our system will analyze it to identify what type of plant it is.
 
@@ -220,7 +241,7 @@ def home_page():
     4. **Results:** View the plant name and detailed information about it.
 
     ### Why Choose Us?
-    - **Accuracy:** Our system utilizes state-of-the-art CNN techniques for accurate plant identification.
+    
     - **User-Friendly:** Simple and intuitive interface for seamless user experience.
     - **Fast and Efficient:** Receive results in seconds.
     - **History:** Keep track of all your previously classified plants.
@@ -240,23 +261,11 @@ def home_page():
         st.session_state.page = "login"
         st.rerun()
 
-# ========== SESSION STATE ==========
-
-if "page" not in st.session_state:
-    st.session_state.page = "home"
-if "user_name" not in st.session_state:
-    st.session_state.user_name = ""
-if "user_email" not in st.session_state:
-    st.session_state.user_email = ""
-if "users" not in st.session_state:
-    st.session_state.users = {}
-if "history" not in st.session_state:
-    st.session_state.history = []
-
 # ========== LOGIN PAGE ==========
 
 def login_page():
-    st.markdown("<h2>Ornamental Plant Classifier</h2>", unsafe_allow_html=True)
+    reset_css()
+    st.markdown("<h2>Ornamental Plant Identifier</h2>", unsafe_allow_html=True)
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
 
@@ -278,8 +287,9 @@ def login_page():
 # ========== SIGNUP PAGE ==========
 
 def signup_page():
+    reset_css()
     st.markdown("<h2>Create Account</h2>", unsafe_allow_html=True)
-    st.caption("Join Ornamental Plant Classifier")
+    st.caption("Join Ornamental Plant Identifier")
     name = st.text_input("Full Name")
     email = st.text_input("Email")
     password = st.text_input("Password", type="password")
@@ -307,10 +317,11 @@ def signup_page():
 # ========== DASHBOARD PAGE ==========
 
 def dashboard_page():
+    reset_css()
     st.markdown(f"<h2>Welcome {st.session_state.user_name} </h2>", unsafe_allow_html=True)
 
-    if st.button("Classify"):
-        st.session_state.page = "analyzer"
+    if st.button("Identify"):
+        st.session_state.page = "identifier"
         st.rerun()
 
     if st.button("History"):
@@ -324,8 +335,9 @@ def dashboard_page():
 
 # ========== CLASSIFIER PAGE ==========
 
-def analyzer_page():
-    st.markdown("<h2>Classify Plant Image</h2>", unsafe_allow_html=True)
+def identifier_page():
+    reset_css()
+    st.markdown("<h2>Identify Plant Image</h2>", unsafe_allow_html=True)
     uploaded = st.file_uploader("Choose an image", type=["jpg", "jpeg", "png"])
 
     if uploaded:
@@ -333,7 +345,7 @@ def analyzer_page():
         image = Image.open(uploaded)
         st.image(image, use_container_width=True)
 
-        if st.button("Classify"):
+        if st.button("Identify"):
             with st.spinner("Analyzing..."):
                 # label = predict(image)
                 label = 1
@@ -354,12 +366,13 @@ def analyzer_page():
 # ========== HISTORY PAGE ==========
 
 def history_page():
-    st.markdown("<h2>Your Classified Plants</h2>", unsafe_allow_html=True)
+    reset_css()
+    st.markdown("<h2>Your Identified Plants</h2>", unsafe_allow_html=True)
 
     results = get_history(st.session_state.user_email)
 
     if not results:
-        st.info("No analyzed plants yet")
+        st.info("No Identified plants yet")
     else:
         for i, result in enumerate(results):
             label, filename, analyzed_at = result
@@ -367,7 +380,7 @@ def history_page():
             <div class="result-item">
                 <h4>#{i+1} - {label}</h4>
                 <p><strong>File:</strong> {filename}</p>
-                <p><small>Analyzed: {analyzed_at}</small></p>
+                <p><small>Identified: {analyzed_at}</small></p>
             </div>
             """, unsafe_allow_html=True)
 
@@ -377,15 +390,15 @@ def history_page():
 
 # ========== ROUTER ==========
 
-if st.session_state.page == "login":
+if st.session_state.page == "home":
+    home_page()
+elif st.session_state.page == "login":
     login_page()
 elif st.session_state.page == "signup":
     signup_page()
 elif st.session_state.page == "dashboard":
     dashboard_page()
-elif st.session_state.page == "analyzer":
-    analyzer_page()
+elif st.session_state.page == "identifier":
+    identifier_page()
 elif st.session_state.page == "history":
     history_page()
-elif st.session_state.page == "home":
-    home_page()
