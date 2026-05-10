@@ -107,7 +107,7 @@ def reset_css():
         /* Text inside input */
         div[data-baseweb="input"] input {
             width:  600px;
-            max-width: 535px;
+            max-width: 540px;
             border-radius: 8px;
             background-color: white !important;
             color: black !important;
