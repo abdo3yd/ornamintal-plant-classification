@@ -99,7 +99,7 @@ def reset_css():
         /* Input box background */
         div[data-baseweb="input"] > div {
             width:  1000px;
-            max-width: 105%;
+            max-width: 106%;
             background-color: white !important;
             color: black !important;
         }
