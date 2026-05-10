@@ -1,15 +1,15 @@
 import streamlit as st
 import sqlite3
-# import tensorflow as tf
+import tensorflow as tf
 import numpy as np
 from datetime import datetime
 
 
-# @st.cache_resource
-# def load_model():
-#     return tf.keras.models.load_model("./trained_model.keras")
+@st.cache_resource
+def load_model():
+    return tf.keras.models.load_model("./trained_model.keras")
 
-# model = load_model()
+model = load_model()
 
 class_names = [
 'Damask Rose',
@@ -41,9 +41,6 @@ st.set_page_config(page_title="Verdant Vision", page_icon="🌿", layout="center
 
 # ========== CSS ==========
 
-    # header {visibility: hidden;}
-    # footer {visibility: hidden;}
-    # MainMenu {visibility: hidden;}
 def reset_css():
     st.markdown("""
     <style>
@@ -54,6 +51,9 @@ def reset_css():
             background-position: center;
         }
         h1, h2, h3 {color: #1abc9c !important;}
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        MainMenu {visibility: hidden;}
         
         /* Blurred background layer */
         .stApp::before {
@@ -347,8 +347,7 @@ def identifier_page():
 
         if st.button("Identify"):
             with st.spinner("Analyzing..."):
-                # label = predict(image)
-                label = 1
+                label = predict(image)
 
             st.markdown(f"""
             <div class="result-box">
