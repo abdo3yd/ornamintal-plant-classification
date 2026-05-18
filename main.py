@@ -83,7 +83,7 @@ def reset_css():
                 
         /* White card container */
         [data-testid="stVerticalBlock"] {
-            background: rgba(205, 210, 200, 0.95);
+            background: rgba(210, 200, 210, 0.85);
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
@@ -221,46 +221,175 @@ if "history" not in st.session_state:
 
 def home_page():
     st.markdown("""
-    <style>  
-    [data-testid="stVerticalBlock"] {
-        width: 1000px;
-        max-width: 110%;
-    } 
+    <style>
+        [data-testid="stAppViewContainer"] {
+        background: rgba(210, 200, 210, 0.85) !important;
+        }
+        [data-testid="stVerticalBlock"] {
+            background: transparent !important;
+            box-shadow: none !important;
+            max-width: 100% !important;
+            padding: 10px !important;
+        }
+        [data-testid="stAppViewContainer"] {
+        padding-top: 0 !important;
+        }
+        [data-testid="block-container"] {
+        padding-top: 0 !important;
+        }
+        /* Navbar full width */
+        .navbar {
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw !important;
+        margin-right: -50vw !important;
+        margin-top: -4rem !important;
+        width: 100vw !important;
+        padding: 15px 40px;
+        background: white;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        }
+        .navbar-logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1abc9c !important;
+        }
+        .navbar-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 16px;
+        }
+        .navbar-links a:hover {
+            color: #1abc9c;
+        }
+        .navbar-btn {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+            color: white !important;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .hero {
+        margin-top: 20px;
+        padding: 30px 40px;  /* was 60px 40px */
+        text-align: center;
+        background: linear-gradient(135deg, rgba(26,188,156,0.2), rgba(22,160,133,0.3));
+        border-radius: 20px;
+        }
+        .hero h1 {
+        font-size: 28px;  /* was 42px */
+        color: #0f4c27 !important;
+        }
+        .hero p {
+        font-size: 14px;  /* was 18px */
+        color: #333;
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: nowrap;
+        }
+        .feature-card {
+        background: white;
+        padding: 8px;  /* was 15px */
+        border-radius: 15px;
+        width: 150px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        text-align: center;
+        }
+        .feature-card h3 {
+        color: #1abc9c !important;
+        font-size: 15px;  /* was 16px */
+        }
+        .feature-card p {
+        color: #555;
+        font-size: 11px;  /* was 13px */
+        }
+        .plants-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+        .plants-section h2 {
+        font-size: 25px;  
+        }
+        .plants-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .plant-tag {
+        background: rgba(26,188,156,0.15);
+        border: 2px solid #1abc9c;
+        padding: 5px 12px;  /* smaller padding too */
+        border-radius: 20px;
+        color: #0f4c27;
+        font-weight: 500;
+        font-size: 12px;  /* smaller text */
+        }
     </style>
-    """
-    , unsafe_allow_html=True)
-    st.header("ORNAMENTAL PLANT IDENTIFIER")
-    st.markdown("""
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-logo">🌿 Verdant Vision</div>
+        <ul class="navbar-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#" class="navbar-btn">Login</a></li>
+        </ul>
+    </div>
+
+    <!-- HERO -->
+    <div class="hero">
+        <h1>Identify Ornamental Plants for Free</h1>
+        <p>Instantly identify ornamental plants from images using advanced deep learning algorithms.</p>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="features">
+        <div class="feature-card"><h3>⚡ Fast</h3><p>Get results in seconds</p></div>
+        <div class="feature-card"><h3>🎯 Accurate</h3><p>State-of-the-art CNN model</p></div>
+        <div class="feature-card"><h3>📋 History</h3><p>Track your past results</p></div>
+        <div class="feature-card"><h3>🔒 Secure</h3><p>Your data is safe</p></div>
+    </div>
+
+    <!-- PLANTS -->
+    <div class="plants-section">
+        <h2>Supported Plants</h2>
+        <div class="plants-grid">
+            <span class="plant-tag">🌹 Damask Rose</span>
+            <span class="plant-tag">🌵 Echeveria Flower</span>
+            <span class="plant-tag">🌸 Mirabilis Jalapa</span>
+            <span class="plant-tag">🌼 Rain Lily</span>
+            <span class="plant-tag">🌺 Zinnia Elegans</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Get Started", use_container_width=True):
+            st.session_state.page = "login"
+            st.rerun()
     
-    Our mission is to help in identifying ornamental plants efficiently. Upload an image of a plant, and our system will analyze it to identify what type of plant it is.
-
-    ### How It Works
-    1. **Create Account:** Sign up or log in to access the classifier.
-    2. **Upload Image:** Go to the **identify** page and upload an image of an ornamental plant.
-    3. **Analysis:** Our system will process the image using advanced deep learning algorithms to identify the plant.
-    4. **Results:** View the plant name and detailed information about it.
-
-    ### Why Choose Us?
-    
-    - **User-Friendly:** Simple and intuitive interface for seamless user experience.
-    - **Fast and Efficient:** Receive results in seconds.
-    - **History:** Keep track of all your previously classified plants.
-
-    ### Supported Plants
-    -  Damask Rose
-    -  Echeveria Flower
-    -  Mirabilis Jalapa
-    -  Rain Lily
-    -  Zinnia Elegans
-
-    ### Get Started
-    Click **Get Started** below to create an account and start classifying!
-    """)
-
-    if st.button("Get Started"):
-        st.session_state.page = "login"
-        st.rerun()
-
+         
 # ========== LOGIN PAGE ==========
 
 def login_page():
